@@ -1,5 +1,9 @@
 package world;
 
+import bee.Drone;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * The queen's chamber is where the mating ritual between the queen and her
  * drones is conducted.  The drones will enter the chamber in order.
@@ -9,8 +13,23 @@ package world;
  * for exiting (like with the worker bees and the flower field).
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Donald Craig
+ * email: dwc9402@rit.edu
  */
 public class QueensChamber {
-    // TODO
+    private ConcurrentLinkedQueue<Drone> droneQueue;
+    private BeeHive hive;
+
+    /**
+     * Creates the Queen's Chamber.
+     * Initially there are no drones present and Queen is not ready to mate.
+     */
+    public QueensChamber(){
+        droneQueue = new ConcurrentLinkedQueue<>();
+    }
+
+
+
+
+
 }

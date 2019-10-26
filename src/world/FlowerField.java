@@ -9,7 +9,8 @@ import bee.Worker;
  * Otherwise the bee must wait until a flower becomes free.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Donald Craig
+ * email: dwc9402@rit.edu
  */
 public class FlowerField {
     /** the maximum number of workers allowed in the field at the same time */
@@ -39,7 +40,14 @@ public class FlowerField {
      */
     public synchronized void enterField(Worker worker) {
         System.out.println("*FF* " + worker + " enters field");
-        // TODO
+        try{
+            while(numWorkers >= MAX_WORKERS){
+                wait();
+            }
+            numWorkers++;
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -54,7 +62,8 @@ public class FlowerField {
      * @param worker the worker bee leaving the field
      */
     public synchronized void exitField(Worker worker) {
-        // TODO
+        numWorkers--;
+        notify();
         System.out.println("*FF* " + worker + " leaves field");
     }
 }

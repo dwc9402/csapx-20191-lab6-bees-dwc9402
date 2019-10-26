@@ -57,15 +57,17 @@ public class BeeHive {
         this.nectar = this.pollen = 0;
 
         // create the bees!
+        this.bees.add(Bee.createBee(Role.QUEEN, Resource.NONE, this));
+        for (int i=0; i<numDrones; ++i ) {
+            this.bees.add(Bee.createBee(Role.DRONE, Resource.NONE, this));
+        }
         for (int i=0; i<numNectarWorkers; ++i ) {
             this.bees.add(Bee.createBee(Role.WORKER, Resource.NECTAR, this));
         }
         for (int i=0; i<numPollenWorkers; ++i ) {
             this.bees.add(Bee.createBee(Role.WORKER, Resource.POLLEN, this));
         }
-
-        // TODO create queen and drone bees
-
+        // need number of perished?
         this.active = true;
         this.numBorn = this.bees.size();
         this.nectarGathered = this.pollenGathered = 0;
@@ -166,7 +168,9 @@ public class BeeHive {
      */
     public void begin() {
         System.out.println("*BH* Bee hive begins buzzing!");
-        // TODO
+        for(Bee bee : bees){
+            bee.start();
+        }
     }
 
     /**
@@ -191,7 +195,15 @@ public class BeeHive {
         // flip the switch
         this.active = false;
 
-        // TODO
+        try {
+            for (Bee bee : bees) {
+                if(bee.getRole() != Role.DRONE){
+                    bee.join();
+                }
+            }
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
 
         System.out.println("*BH* Bee hive stops buzzing!");
     }
@@ -214,7 +226,8 @@ public class BeeHive {
      * @param bee the new bee
      */
     public synchronized void addBee(Bee bee) {
-        // TODO
+        bees.add(bee);
+        bee.start();
     }
 
     /**
@@ -224,8 +237,12 @@ public class BeeHive {
      * @return do we have enough resources?
      */
     public synchronized boolean hasResources() {
-        // TODO
-        return false;
+        if(nectar >= 1 && pollen >= 1){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -235,7 +252,10 @@ public class BeeHive {
      * @rit.pre {@link BeeHive#hasResources()} is true
      */
     public synchronized void claimResources() {
-        // TODO
+        if(hasResources()){
+            nectar--;
+            pollen--;
+        }
     }
 
     /**
@@ -253,6 +273,13 @@ public class BeeHive {
      */
     public synchronized void deposit(Resource resource, Worker bee) {
         System.out.println("*BH* " + bee + " deposits");
-        // TODO
+        //check if area in use?
+        if(resource == Resource.NECTAR){
+            nectarGathered++;
+            nectar++;
+        }else if(resource == Resource.POLLEN){
+            pollenGathered++;
+            pollen++;
+        }
     }
 }
