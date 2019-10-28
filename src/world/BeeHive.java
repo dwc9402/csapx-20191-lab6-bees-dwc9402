@@ -216,7 +216,9 @@ public class BeeHive {
      * @param bee the bee who perished
      */
     public synchronized void beePerished (Bee bee){
-        // TODO
+        bees.remove(bee);
+        perishedBees.add(bee);
+        System.out.println("*D* " + bee + " has perished!");
     }
 
     /**

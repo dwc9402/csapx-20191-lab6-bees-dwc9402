@@ -71,7 +71,18 @@ public class Worker extends Bee {
      * their resource into the bee hive (if it is still active).  This process
      * repeats until the bee hive becomes inactive.
      */
-    public void run() {
-        // TODO
+    public synchronized void run() {
+        while(beeHive.isActive()){
+            flowerField.enterField(this);
+            try {
+                sleep(WORKER_SLEEP_TIME_MS);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            flowerField.exitField(this);
+            if(beeHive.isActive()) {
+                beeHive.deposit(resource, this);
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ import world.BeeHive;
  * @author YOUR NAME HERE
  */
 public class Drone extends Bee {
+    private boolean mated;
 
     /**
      * When the drone is created they should retrieve the queen's
@@ -21,6 +22,7 @@ public class Drone extends Bee {
      */
     public Drone(BeeHive beeHive){
         super(Role.DRONE, beeHive);
+        this.mated = false;
     }
 
     /**
@@ -38,7 +40,30 @@ public class Drone extends Bee {
      * simulation and they should end their run without any
      * sleeping.
      */
-    public void run() {
-        // TODO
+    public synchronized void run() {
+        beeHive.getQueensChamber().enterChamber(this);
+
+        while(beeHive.isActive()){
+            //System.out.println("*D* " + this + " enters queen's chamber");
+            if(mated){
+                try {
+                    this.sleep(Queen.SLEEP_TIME_MS);
+                    beeHive.beePerished(this);
+                    System.out.println("*D " + this + " has perished!");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    this.wait(Queen.MATE_TIME_MS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void setMated(){
+        this.mated = true;
     }
 }
