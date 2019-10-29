@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class QueensChamber {
     private ConcurrentLinkedQueue<Drone> droneQueue;
+    private boolean queenReady;
+    private boolean canMate;
     private BeeHive hive;
 
     /**
@@ -27,6 +29,8 @@ public class QueensChamber {
      */
     public QueensChamber(){
         droneQueue = new ConcurrentLinkedQueue<>();
+        queenReady = false;
+        canMate =true;
     }
 
     /**
@@ -36,15 +40,21 @@ public class QueensChamber {
     public synchronized void enterChamber(Drone drone){
         System.out.println("*QC* " + drone + " enters chamber");
         droneQueue.add(drone);
-        if(drone.equals(droneQueue.peek()) && hive.hasResources()){
-            droneQueue.remove(drone);
-            drone.setMated();
-        }else{
-            try {
-                this.wait(Queen.MATE_TIME_MS);
-                this.notify();
-            } catch (InterruptedException e) {
+        assert droneQueue.peek() != null;
+        while (!queenReady || droneQueue.peek().equals(drone)){
+            try{
+                this.wait();
+            }
+            catch (InterruptedException e){
                 e.printStackTrace();
+            }
+        }
+
+        if (canMate){
+            assert droneQueue.peek() != null;
+            if (queenReady){
+                queenReady = false;
+                drone.setMated();
             }
         }
         System.out.println("*QC* " + drone + " leaves chamber");
@@ -62,10 +72,11 @@ public class QueensChamber {
      * the drone that unblocks is not the front one.
      */
     public synchronized void summonDrone(){
+        queenReady = true;
         if(!droneQueue.isEmpty()){
             Drone drone = droneQueue.poll();
             System.out.println("*QC* Queen mates with " + drone);
-            droneQueue.notifyAll();
+            notifyAll();
         }
     }
 
@@ -84,9 +95,6 @@ public class QueensChamber {
      * @return If there is still a drone waiting
      */
     public synchronized boolean hasDrone(){
-        if(!droneQueue.isEmpty()){
-            return true;
-        }else
-            return false;
+        return !droneQueue.isEmpty();
     }
 }

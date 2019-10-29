@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * uses the resources in order to support reproduction.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Donald Craig
+ * email: dwc9402@rit.edu
  */
 public class BeeHive {
     /** the field of flowers */
@@ -275,7 +276,6 @@ public class BeeHive {
      */
     public synchronized void deposit(Resource resource, Worker bee) {
         System.out.println("*BH* " + bee + " deposits");
-        //check if area in use?
         if(resource == Resource.NECTAR){
             nectarGathered++;
             nectar++;

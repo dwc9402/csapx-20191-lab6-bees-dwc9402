@@ -1,6 +1,8 @@
 package bee;
 
+import static util.RandomBee.nextInt;
 import world.BeeHive;
+import world.QueensChamber;
 
 /**
  * The queen is the master of the bee hive and the only bee that is allowed
@@ -18,7 +20,8 @@ import world.BeeHive;
  * netflix before she chills with her next drone.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Donald Craig
+ * email: dwc9402@@rit.edu
  */
 public class Queen extends Bee {
     /**
@@ -33,6 +36,8 @@ public class Queen extends Bee {
     /** the maximum number of new bees that will be created by one mating session */
     public final static int MAX_NEW_BEES = 4;
 
+    private QueensChamber chamber;
+
     /**
      * Create the queen.  She should get the queen's chamber from the bee hive.
      *
@@ -40,6 +45,7 @@ public class Queen extends Bee {
      */
     public Queen(BeeHive beeHive) {
         super(Bee.Role.QUEEN, beeHive);
+        chamber = beeHive.getQueensChamber();
     }
 
     /**
@@ -65,6 +71,38 @@ public class Queen extends Bee {
      * still waiting in her chamber.
      */
     public void run() {
-        // TODO
+        while (beeHive.isActive()) {
+            if (beeHive.hasResources() && chamber.hasDrone()) {
+                chamber.summonDrone();
+                try {
+                    sleep(MATE_TIME_MS);
+                }
+                catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+                int numBees = nextInt(MIN_NEW_BEES, MAX_NEW_BEES);
+                for (int loop = 0; loop < numBees; loop++) {
+                    int randRole = nextInt(1, 10);
+                    if (randRole < 3) {
+                        beeHive.addBee(Queen.createBee(Role.WORKER, Worker.Resource.POLLEN, beeHive));
+                    } else if (randRole < 5) {
+                        beeHive.addBee(Queen.createBee(Role.WORKER, Worker.Resource.NECTAR, beeHive));
+                    } else {
+                        beeHive.addBee(Queen.createBee(Role.DRONE, Worker.Resource.NONE, beeHive));
+                    }
+                }
+                beeHive.claimResources();
+                System.out.println("*Q* Queen birthed " + numBees + " children");
+            }
+            else {
+                try {
+                    sleep(SLEEP_TIME_MS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        while(chamber.hasDrone())
+            chamber.dismissDrone();
     }
 }

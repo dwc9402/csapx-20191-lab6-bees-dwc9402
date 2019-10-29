@@ -63,7 +63,7 @@ public class FlowerField {
      */
     public synchronized void exitField(Worker worker) {
         numWorkers--;
-        notify();
         System.out.println("*FF* " + worker + " leaves field");
+        notify();
     }
 }
