@@ -40,23 +40,16 @@ public class QueensChamber {
     public synchronized void enterChamber(Drone drone){
         System.out.println("*QC* " + drone + " enters chamber");
         droneQueue.add(drone);
-        assert droneQueue.peek() != null;
-        while (!queenReady || droneQueue.peek().equals(drone)){
+        while (!queenReady || !droneQueue.peek().equals(drone)){
             try{
-                this.wait();
+                wait();
             }
             catch (InterruptedException e){
                 e.printStackTrace();
             }
         }
-
-        if (canMate){
-            assert droneQueue.peek() != null;
-            if (queenReady){
-                queenReady = false;
-                drone.setMated();
-            }
-        }
+        droneQueue.remove();
+        queenReady = false;
         System.out.println("*QC* " + drone + " leaves chamber");
     }
 
@@ -72,9 +65,10 @@ public class QueensChamber {
      * the drone that unblocks is not the front one.
      */
     public synchronized void summonDrone(){
-        queenReady = true;
         if(!droneQueue.isEmpty()){
-            Drone drone = droneQueue.poll();
+            Drone drone = droneQueue.peek();
+            this.queenReady = true;
+            drone.setMated();
             System.out.println("*QC* Queen mates with " + drone);
             notifyAll();
         }
@@ -85,16 +79,19 @@ public class QueensChamber {
      * dismiss all the drones that were waiting to mate.
      */
     public synchronized void dismissDrone(){
-        for(Drone drone : droneQueue){
-            droneQueue.remove(drone);
-        }
+        queenReady = true;
+        notifyAll();
     }
 
     /**
-     *
+     * Method to check if any drones are waiting in the chamber.
      * @return If there is still a drone waiting
      */
     public synchronized boolean hasDrone(){
-        return !droneQueue.isEmpty();
+        if (droneQueue.isEmpty()){
+            return false;
+        } else {
+            return true;
+        }
     }
 }

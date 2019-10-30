@@ -45,22 +45,21 @@ public class Drone extends Bee {
      * sleeping.
      */
     public synchronized void run() {
-        if(beeHive.isActive()){
+        while(beeHive.isActive() && !mated){
             chamber.enterChamber(this);
             if(mated){
                 try {
                     sleep(Queen.SLEEP_TIME_MS);
+                    beeHive.beePerished(this);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                chamber.dismissDrone();
-                beeHive.beePerished(this);
             }
         }
     }
 
     /**
-     *
+     * The queen will let the drone know when they have mated.
      */
     public void setMated(){
         this.mated = true;

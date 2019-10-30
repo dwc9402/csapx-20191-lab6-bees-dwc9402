@@ -83,6 +83,8 @@ public class Worker extends Bee {
             if(beeHive.isActive()) {
                 beeHive.deposit(resource, this);
             }
+
+
         }
     }
 }

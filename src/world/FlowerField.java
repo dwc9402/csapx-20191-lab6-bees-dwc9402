@@ -39,15 +39,16 @@ public class FlowerField {
      * @param worker the worker bee entering the field
      */
     public synchronized void enterField(Worker worker) {
-        System.out.println("*FF* " + worker + " enters field");
+
         try{
             while(numWorkers >= MAX_WORKERS){
                 wait();
             }
-            numWorkers++;
         }catch(InterruptedException e){
             e.printStackTrace();
         }
+        System.out.println("*FF* " + worker + " enters field");
+        numWorkers++;
     }
 
     /**

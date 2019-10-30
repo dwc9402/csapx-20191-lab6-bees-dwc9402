@@ -205,7 +205,6 @@ public class BeeHive {
         }catch(InterruptedException e){
             e.printStackTrace();
         }
-
         System.out.println("*BH* Bee hive stops buzzing!");
     }
 
@@ -240,12 +239,7 @@ public class BeeHive {
      * @return do we have enough resources?
      */
     public synchronized boolean hasResources() {
-        if(nectar >= 1 && pollen >= 1){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return nectar > 0 && pollen > 0;
     }
 
     /**
