@@ -34,7 +34,18 @@ public class QueensChamber {
     }
 
     /**
+     * The fun (frustrating) routine.
+     * A drone enters the chamber. The first thing you should display is:
      *
+     * *QC* {bee} enters chamber
+     *
+     * The bees should be stored in some queue like collection. If the queen is
+     * ready and this drone is at the front of the collection, they are allowed
+     * to mate. Otherwise they must wait. The queen isn't into any of this kinky
+     * multiple partner stuff so while she is mating with a drone, she is not
+     * ready to mate again. When the drone leaves this method, display the message:
+     *
+     * *QC* {bee} leaves chamber
      * @param drone The drone bee entering the chamber
      */
     public synchronized void enterChamber(Drone drone){
